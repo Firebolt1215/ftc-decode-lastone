@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.utils.DecodeDataTypes.MotorPositions;
 import org.firstinspires.ftc.teamcode.utils.FtcJsonStorage;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Executable;
 import java.util.List;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -105,7 +106,8 @@ public class AprilTags extends LinearOpMode {
             // Loop through each detection and display its info
             boolean detectsBlueTag = false; //id 20
             boolean detectsRedTag = false; //id 24
-            ArtifactSequence artifactColors;
+
+            int hasSequenceTimes = 0;
 
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) { // Check if metadata is available
@@ -117,30 +119,36 @@ public class AprilTags extends LinearOpMode {
 
                     switch (detection.metadata.id) {
                         case 21:
-                            artifactColors = ArtifactSequence.of(
+                            artifactSequence = ArtifactSequence.of(
                                 ArtifactColor.GREEN,
                                 ArtifactColor.PURPLE,
                                 ArtifactColor.PURPLE
                             );
-
+                            hasSequenceTimes++;
+                            continue;
                         case 22:
-                            artifactColors = ArtifactSequence.of(
+                            artifactSequence = ArtifactSequence.of(
                                     ArtifactColor.PURPLE,
                                     ArtifactColor.GREEN,
                                     ArtifactColor.PURPLE
                             );
+                            hasSequenceTimes += 2;
+                            continue;
                         case 23:
-                            artifactColors = ArtifactSequence.of(
+                            artifactSequence = ArtifactSequence.of(
                                     ArtifactColor.PURPLE,
                                     ArtifactColor.PURPLE,
                                     ArtifactColor.GREEN
                             );
+                            hasSequenceTimes += 3;
                     }
+
 
                     telemetry.addLine(String.format("\n==== ID %d (%s)", detection.id, detection.metadata.name));
                     telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                     telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
                     telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+
                 } else {
                     /*
                     telemetry.addLine(String.format("\n==== ID %d (Unknown)", detection.id));
@@ -153,8 +161,16 @@ public class AprilTags extends LinearOpMode {
             telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
             telemetry.addLine("RBE = Range, Bearing & Elevation");
             */
-            telemetry.addData("Blue Goal Tag Detected:", detectsBlueTag);
-            telemetry.addData("Red Goal Tag Detected:", detectsRedTag);
+            telemetry.addData("Has Sequence Times", hasSequenceTimes);
+            if (artifactSequence.isEmpty()) {
+                telemetry.addData("Artifact Sequence Empty", true);
+            } else {
+                String[] seq = artifactSequence.toStringArray();
+                telemetry.addData("Artifact Sequence", (seq[0] + ", " + seq[1] + ", " + seq[2]));
+            }
+            telemetry.addData("Blue Goal Tag Detected", detectsBlueTag);
+            telemetry.addData("Red Goal Tag Detected", detectsRedTag);
+
             //telemetry.addData("Artifact Color", artifactColors[i]);
 
 
