@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
 @TeleOp(name = "Base TARS", group = "Robot")
-public abstract class Base extends LinearOpMode {
+public class Base extends LinearOpMode {
 	@Override
 	public void runOpMode() {
 		Drivebase drivebase = new Drivebase(1.00, 1.00, hardwareMap);
@@ -26,7 +26,7 @@ public abstract class Base extends LinearOpMode {
 			drivebase.update(gamepad1);
 			intake.update(gamepad1);
 			leverTransfer.update(gamepad1);
-			spindexer.update();
+			spindexer.update(gamepad1);
 
 			telemetry.addLine(drivebase.getTelemetryData());
 			telemetry.addLine(intake.getTelemetryData());
