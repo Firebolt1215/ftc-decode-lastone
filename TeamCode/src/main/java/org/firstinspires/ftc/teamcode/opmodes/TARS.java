@@ -12,9 +12,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "TARS -JetEngine", group = "Robot")
 public class TARS extends LinearOpMode {
 	final InterstellarBot tars = new InterstellarBot(
-			new Drivebase(1.0, 1.0),
+			new Drivebase(1.00, 1.00),
 			new Intake(),
-			new LeverTransfer(0.3, 0.0),
+			new LeverTransfer(0.28, 0.00),
 			new Spindexer()
 	);
 
@@ -32,6 +32,8 @@ public class TARS extends LinearOpMode {
 
 		while (opModeIsActive()) {
 			// run subsystems logic
+			//todo: fix calling buttonMaps being called multiple times
+			//todo: more comments
 			tars.update();
 
 			// print telemetry

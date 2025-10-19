@@ -31,12 +31,17 @@ public abstract class Subsystem {
 		private final Gamepad gamepad;
 		private final TriggerType triggerType;
 		private final Button button;
-		private boolean currentState = false;
+		private boolean previousState, currentState = false;
 
 		public ButtonMap(Gamepad gamepad, TriggerType triggerType, Button button) {
 			this.gamepad = gamepad;
 			this.triggerType = triggerType;
 			this.button = button;
+		}
+
+		public void updateState() {
+			previousState = currentState;
+			currentState = isPressed();
 		}
 
 		public boolean isPressed() {
@@ -67,9 +72,6 @@ public abstract class Subsystem {
 		}
 
 		public boolean evaluate() {
-			boolean previousState = currentState;
-			currentState = isPressed();
-
 			switch (triggerType) {
 				case WHILE_PRESSED:
 					return currentState;

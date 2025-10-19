@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -13,11 +15,15 @@ public final class Spindexer extends Subsystem {
 	private final static double[] TRANSFER_DEGREE_POSITIONS = {180.0, 60.0, 300.0};
 
 	private Servo spindexer;
+	private DigitalChannel beamBreak;
+	private ColorSensor colorSensor;
 	private ButtonMap xButtonMap, yButtonMap, bButtonMap, aButtonMap;
 
 	@Override
 	public void init(HardwareMap hardwareMap) {
 		spindexer = hardwareMap.get(Servo.class, "spindexer");
+		beamBreak = hardwareMap.get(DigitalChannel.class, "beamBreak");
+		colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
 	}
 
 	@Override
@@ -33,6 +39,11 @@ public final class Spindexer extends Subsystem {
 
 	@Override
 	public void update() {
+		xButtonMap.updateState();
+		yButtonMap.updateState();
+		bButtonMap.updateState();
+		aButtonMap.updateState();
+
 		xButtonMap.handle(() -> {
 			selectedSegment = 0;
 		});
@@ -56,6 +67,12 @@ public final class Spindexer extends Subsystem {
 
 	@Override
 	public String getTelemetryData() {
-		return String.format("selectedSegment: %d\nisIntakePosition: %b", selectedSegment, isIntakePosition);
+		return String.format(
+				"selectedSegment: %d\n" +
+				"isIntakePosition: %b\n" +
+				"beamBreak: %b\n" +
+				"colorSensorRGB: %d, %d, %d",
+				selectedSegment, isIntakePosition, beamBreak.getState(),
+				colorSensor.red(), colorSensor.green(), colorSensor.blue());
 	}
 }
