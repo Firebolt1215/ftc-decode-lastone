@@ -40,7 +40,6 @@ public class InterstellarBot {
 		//condition.getState() == true
 		*/
 
-
 		for (Subsystem subsystem : subsystems) {
 			subsystem.update();
 		}

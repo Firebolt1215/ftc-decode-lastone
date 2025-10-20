@@ -34,6 +34,9 @@ public final class Spindexer extends Subsystem {
 		this.gamepad1 = gamepad1;
 		this.gamepad2 = gamepad2;
 
+		//               Trigger(BooleanSupplier condition, TriggerType triggerType, Action action)
+		//               BooleanSupplier GamepadButton(Gamepad gamepad, Button button)
+		//todo: replace BooleanSupplier with Condition
 		xButtonMap = new ButtonMap(gamepad1, ButtonMap.TriggerType.WHILE_PRESSED, ButtonMap.Button.X);
 		yButtonMap = new ButtonMap(gamepad1, ButtonMap.TriggerType.WHILE_PRESSED, ButtonMap.Button.Y);
 		bButtonMap = new ButtonMap(gamepad1, ButtonMap.TriggerType.WHILE_PRESSED, ButtonMap.Button.B);
@@ -48,6 +51,11 @@ public final class Spindexer extends Subsystem {
 		bButtonMap.updateState();
 		aButtonMap.updateState();
 
+		/*
+		Trigger.handle(() -> {
+			selectedSegment = 0;
+		});
+		*/
 		xButtonMap.handle(() -> {
 			selectedSegment = 0;
 		});
