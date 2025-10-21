@@ -5,15 +5,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.interstellar.Trigger;
 import org.firstinspires.ftc.teamcode.interstellar.conditions.GamepadButton;
 import org.firstinspires.ftc.teamcode.interstellar.conditions.StatefulCondition;
-import org.firstinspires.ftc.teamcode.interstellar.directives.Directive;
+import org.firstinspires.ftc.teamcode.interstellar.directives.DefaultDirective;
 import org.firstinspires.ftc.teamcode.subsystems.LeverTransfer;
 
-public class DefaultLeverTransfer extends Directive {
-	private final LeverTransfer leverTransfer;
-	private final Gamepad gamepad;
+public class DefaultLeverTransfer extends DefaultDirective {
 	public DefaultLeverTransfer(LeverTransfer leverTransfer, Gamepad gamepad) {
-		this.leverTransfer = leverTransfer;
-		this.gamepad = gamepad;
+        super(leverTransfer);
 
 		setInterruptible(true);
 		setRequires(leverTransfer);
@@ -21,7 +18,7 @@ public class DefaultLeverTransfer extends Directive {
 		new Trigger(
 				new StatefulCondition(
 						new GamepadButton(gamepad, GamepadButton.Button.DPAD_UP),
-						StatefulCondition.Edge.RISING
+						StatefulCondition.Edge.RISING //On initial press
 				),
 				() -> {leverTransfer.setLeverPositionIsUp(true);}
 		).schedule();
@@ -29,7 +26,7 @@ public class DefaultLeverTransfer extends Directive {
 		new Trigger(
 				new StatefulCondition(
 						new GamepadButton(gamepad, GamepadButton.Button.DPAD_DOWN),
-						StatefulCondition.Edge.RISING
+						StatefulCondition.Edge.RISING //On initial press
 				),
 				() -> {leverTransfer.setLeverPositionIsUp(false);}
 		).schedule();
@@ -37,29 +34,9 @@ public class DefaultLeverTransfer extends Directive {
 		new Trigger(
 				new StatefulCondition(
 						new GamepadButton(gamepad, GamepadButton.Button.DPAD_LEFT),
-						StatefulCondition.Edge.RISING
+						StatefulCondition.Edge.RISING //On initial press
 				),
 				leverTransfer::toggleLeverPosition
 		).schedule();
-	}
-
-	@Override
-	public void start(boolean interrupted) {
-
-	}
-
-	@Override
-	public void update() {
-		leverTransfer.updateServoPosition();
-	}
-
-	@Override
-	public void stop(boolean interrupted) {
-
-	}
-
-	@Override
-	public boolean isFinished() {
-		return false;
 	}
 }

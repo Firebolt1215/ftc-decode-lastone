@@ -14,9 +14,9 @@ public class Scheduler {
 		return instance;
 	}
 
+	private final List<Subsystem> subsystems = new ArrayList<>();
 	private final List<Directive> runningDirectives = new ArrayList<>();
 	private final List<Trigger> activeTriggers = new ArrayList<>();
-	private final List<Subsystem> subsystems = new ArrayList<>();
 
 	public void addSubsystem(Subsystem subsystem) {
 		subsystems.add(subsystem);
@@ -31,38 +31,38 @@ public class Scheduler {
 
 		boolean didInterrupt = false;
 
-		//for every running directive
+		// for every running directive
 		for (Iterator<Directive> iterator = runningDirectives.iterator(); iterator.hasNext();) {
 			Directive runningDirective = iterator.next();
 
-			//check for conflicts
+			// check for conflicts
 			CONFLICT_CHECK:
-			//for every subsystem required by the new directive
+			// for every subsystem required by the new directive
 			for (Subsystem requiredByNew : directiveToSchedule.getRequiredSubsystems()) {
-				//for every subsystem required by the running directive
+				// for every subsystem required by the running directive
 				for (Subsystem requiredByRunning : runningDirective.getRequiredSubsystems()) {
 					if (requiredByNew == requiredByRunning) {
 						// CONFLICT FOUND!
 
 						if (runningDirective.isInterruptible()) {
-							// If the running command is interruptible, stop it and remove it.
+							// if the running command is interruptible, stop it and remove it.
 							runningDirective.stop(true);
 							iterator.remove();
 							didInterrupt = true;
 						} else {
-							//running command unable to be interrupted, so can't schedule new directive
+							// running command unable to be interrupted, so can't schedule new directive
 							return;
 						}
 
-						//checked requirements for this runningDirective, move to next
+						// checked requirements for this runningDirective, move to next
 						break CONFLICT_CHECK;
 					}
 				}
 			}
 		}
 
-		runningDirectives.add(directiveToSchedule); //add to running directives
-		directiveToSchedule.start(didInterrupt); //start directive and pass hadToInterruptToStart status
+		runningDirectives.add(directiveToSchedule); // add to running directives
+		directiveToSchedule.start(didInterrupt); // start directive and pass hadToInterruptToStart status
 	}
 
 	public void addTrigger(Trigger trigger) {
@@ -72,12 +72,15 @@ public class Scheduler {
 	public void run() {
 		//todo: add sequences
 		//todo: be able to add subsystems other than `this` to requirements
+
+		// check and run all triggers
 		for (Trigger trigger : activeTriggers) {
 			if (trigger.check()) {
 				trigger.run();
 			}
 		}
 
+		// update directives and remove finished directives
 		for (Iterator<Directive> iterator = runningDirectives.iterator(); iterator.hasNext();) {
 			Directive directive = iterator.next();
 			if (directive.isFinished()) {
@@ -88,6 +91,7 @@ public class Scheduler {
 			}
 		}
 
+		// if subsystem isn't being used, then schedule default directive
 		for (Subsystem subsystem : subsystems) {
 			Directive defaultDirective = subsystem.getDefaultDirective();
 
@@ -98,11 +102,10 @@ public class Scheduler {
 	}
 
 	private boolean isSubsystemInUse(Subsystem subsystemToCheck) {
+		//for every running directive
 		for (Directive runningDirective : runningDirectives) {
-			if (runningDirective == subsystemToCheck.getDefaultDirective()) {
-				continue;
-			}
-
+			//check if running directive requires subsystem
+			//includes the default directive itself but that's fine for this application
 			for (Subsystem requiredSubsystem : runningDirective.getRequiredSubsystems()) {
 				if (requiredSubsystem == subsystemToCheck) {
 					return true;
@@ -114,12 +117,15 @@ public class Scheduler {
 	}
 
 	public void cancelAll() {
+		//clear all running triggers
 		activeTriggers.clear();
 
+		//stop all directives
 		for (Directive directive : runningDirectives) {
 			directive.stop(true);
 		}
 
+		//clear all running directives
 		runningDirectives.clear();
 	}
 }
