@@ -2,18 +2,16 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.interstellar.directives.SetPosition;
-import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrapper.StellarServo;
+import org.firstinspires.ftc.teamcode.directives.DefaultLeverTransfer;
+import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrappers.StellarServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.interstellar.Subsystem;
 
 public final class LeverTransfer extends Subsystem {
-	private Gamepad gamepad1, gamepad2;
 	private StellarServo leverTransfer;
 	private final double leverDownPosition, leverUpPosition;
-	private boolean leverTargetIsUpPosition = false;
-	private ButtonMap dpadUpButtonMap, dpadDownButtonMap, dpadLeftButtonMap;
+	private boolean isLeverTargetUp = false;
 
     public LeverTransfer(double leverDownPosition, double leverUpPosition) {
 		this.leverDownPosition = leverDownPosition;
@@ -27,38 +25,28 @@ public final class LeverTransfer extends Subsystem {
 
 	@Override
 	public void setGamepads(Gamepad gamepad1, Gamepad gamepad2) {
-		this.gamepad1 = gamepad1;
-		this.gamepad2 = gamepad2;
-
-		dpadUpButtonMap = new ButtonMap(gamepad1, ButtonMap.TriggerType.ON_INITIAL_PRESS, ButtonMap.Button.DPAD_UP);
-		dpadDownButtonMap = new ButtonMap(gamepad1, ButtonMap.TriggerType.ON_INITIAL_PRESS, ButtonMap.Button.DPAD_DOWN);
-		dpadLeftButtonMap = new ButtonMap(gamepad1, ButtonMap.TriggerType.ON_INITIAL_PRESS, ButtonMap.Button.DPAD_LEFT);
+		setDefaultDirective(new DefaultLeverTransfer(this, gamepad1));
 	}
 
 	@Override
 	public void update() {
-		//todo: stop command spam
-		dpadUpButtonMap.handle(() -> {
-			leverTargetIsUpPosition = true;
-		});
 
-		dpadDownButtonMap.handle(() -> {
-			leverTargetIsUpPosition = false;
-		});
+	}
 
-		dpadLeftButtonMap.handle(() -> {
-			leverTargetIsUpPosition = !leverTargetIsUpPosition;
-		});
+	public void setLeverPositionIsUp(boolean isUpPosition) {
+		isLeverTargetUp = isUpPosition;
+	}
 
-		new SetPosition(leverTransfer,
-				leverTargetIsUpPosition ? leverUpPosition : leverDownPosition
-		).interruptible(true).requires(this).schedule();
+	public void toggleLeverPosition() {
+		isLeverTargetUp = !isLeverTargetUp;
+	}
 
-		//leverTransfer.setPosition(leverTargetIsUpPosition ? leverUpPosition : leverDownPosition);
+	public void updateServoPosition() {
+		leverTransfer.setPosition(isLeverTargetUp ? leverUpPosition : leverDownPosition);
 	}
 
 	@Override
 	public String getTelemetryData() {
-		return String.format("Lever Up Position: %f\nLever Is Up: %b", leverUpPosition, leverTargetIsUpPosition);
+		return String.format("Lever Up Position: %f\nLever Is Up: %b", leverUpPosition, isLeverTargetUp);
 	}
 }

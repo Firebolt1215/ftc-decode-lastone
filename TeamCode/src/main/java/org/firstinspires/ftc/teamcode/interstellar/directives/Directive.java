@@ -9,10 +9,10 @@ public abstract class Directive {
 	//no required subsystems by default
 	private Subsystem[] requiredSubsystems = {};
 
-	//not interruptible by default
-	private boolean interruptible = false;
+	//interruptible by default
+	private boolean interruptible = true;
 
-	public abstract void start(boolean interrupted);
+	public abstract void start(boolean hadToInterruptToStart);
 
 	public abstract void update();
 

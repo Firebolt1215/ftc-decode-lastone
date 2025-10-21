@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.interstellar.directives;
 
-import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrapper.StellarServo;
+import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrappers.StellarServo;
 import org.firstinspires.ftc.teamcode.interstellar.Subsystem;
 
 public class SetPosition extends Directive {
@@ -10,10 +10,11 @@ public class SetPosition extends Directive {
 	public SetPosition(StellarServo servo, double targetPosition) {
 		this.servo = servo;
 		this.targetPosition = targetPosition;
+		setInterruptible(true);
 	}
 
 	@Override
-	public void start(boolean interrupted) {
+	public void start(boolean hadToInterruptToStart) {
 		servo.setPosition(targetPosition);
 	}
 

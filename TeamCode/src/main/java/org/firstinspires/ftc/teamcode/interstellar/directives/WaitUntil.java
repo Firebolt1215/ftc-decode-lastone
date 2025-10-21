@@ -10,7 +10,7 @@ public class WaitUntil extends Directive {
 	}
 
 	@Override
-	public void start(boolean interrupted) {}
+	public void start(boolean hadToInterruptToStart) {}
 
 	@Override
 	public void update() {}

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.interstellar.directives.SetPower;
-import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrapper.StellarDcMotor;
+import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrappers.StellarDcMotor;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.interstellar.directives;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrapper.StellarDcMotor;
+import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrappers.StellarDcMotor;
 import org.firstinspires.ftc.teamcode.interstellar.Subsystem;
 
 public class MoveTo extends Directive {
@@ -14,10 +14,11 @@ public class MoveTo extends Directive {
 		this.motor = motor;
 		this.targetPosition = targetPosition;
 		this.power = power;
+		setInterruptible(true);
 	}
 
 	@Override
-	public void start(boolean interrupted) {
+	public void start(boolean hadToInterruptToStart) {
 		motor.setTargetPosition(targetPosition);
 		motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		motor.setPower(Math.abs(power));

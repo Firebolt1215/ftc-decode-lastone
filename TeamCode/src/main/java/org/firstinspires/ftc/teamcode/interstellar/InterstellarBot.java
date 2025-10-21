@@ -3,9 +3,6 @@ package org.firstinspires.ftc.teamcode.interstellar;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 //Stellar, Wormholes, Docking Procedure, Murphy's Law, Procedure
 
@@ -14,6 +11,9 @@ public class InterstellarBot {
 
 	public InterstellarBot(Subsystem... subsystems) {
 		this.subsystems = subsystems;
+		for (Subsystem subsystem : subsystems) {
+			Scheduler.getInstance().addSubsystem(subsystem);
+		}
 	}
 
 	public void init(HardwareMap hardwareMap) {
@@ -30,15 +30,6 @@ public class InterstellarBot {
 
 	public void update() {
 		Scheduler.getInstance().run();
-		/*
-		final AtomicInteger test = new AtomicInteger(2);
-		Condition condition = new Condition(() -> test.get() == 3);
-		condition.updateState();
-		//condition.getState() == false
-		test.set(2);
-		condition.updateState();
-		//condition.getState() == true
-		*/
 
 		for (Subsystem subsystem : subsystems) {
 			subsystem.update();

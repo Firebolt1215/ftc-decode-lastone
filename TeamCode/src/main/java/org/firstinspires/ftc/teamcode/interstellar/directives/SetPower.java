@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.interstellar.directives;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.interstellar.Subsystem;
-import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrapper.StellarDcMotor;
+import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrappers.StellarDcMotor;
 
 public class SetPower extends Directive {
 	private final StellarDcMotor motor;
@@ -12,10 +12,11 @@ public class SetPower extends Directive {
 	public SetPower(StellarDcMotor motor, double power) {
 		this.motor = motor;
 		this.power = power;
+		setInterruptible(true);
 	}
 
 	@Override
-	public void start(boolean interrupted) {
+	public void start(boolean hadToInterruptToStart) {
 		motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		motor.setPower(power);
 	}

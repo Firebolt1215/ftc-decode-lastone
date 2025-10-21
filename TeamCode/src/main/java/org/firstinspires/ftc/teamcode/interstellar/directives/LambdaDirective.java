@@ -22,8 +22,8 @@ public class LambdaDirective extends Directive {
 	}
 
 	@Override
-	public void start(boolean interrupted) {
-		onStart.run(interrupted);
+	public void start(boolean hadToInterruptToStart) {
+		onStart.run(hadToInterruptToStart);
 	}
 
 	public LambdaDirective onUpdate(Action onUpdate) {

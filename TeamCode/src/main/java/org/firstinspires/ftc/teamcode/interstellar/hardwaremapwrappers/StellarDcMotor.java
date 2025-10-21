@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrapper;
+package org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrappers;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;

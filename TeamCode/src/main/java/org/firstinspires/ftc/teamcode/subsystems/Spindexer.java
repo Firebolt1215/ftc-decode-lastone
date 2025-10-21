@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.interstellar.Subsystem;
 import org.firstinspires.ftc.teamcode.interstellar.directives.SetPosition;
-import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrapper.StellarServo;
+import org.firstinspires.ftc.teamcode.interstellar.hardwaremapwrappers.StellarServo;
 
 public final class Spindexer extends Subsystem {
 	private Gamepad gamepad1, gamepad2;
@@ -34,9 +34,8 @@ public final class Spindexer extends Subsystem {
 		this.gamepad1 = gamepad1;
 		this.gamepad2 = gamepad2;
 
-		//               Trigger(BooleanSupplier condition, TriggerType triggerType, Action action)
-		//               BooleanSupplier GamepadButton(Gamepad gamepad, Button button)
 		//todo: replace BooleanSupplier with Condition
+
 		xButtonMap = new ButtonMap(gamepad1, ButtonMap.TriggerType.WHILE_PRESSED, ButtonMap.Button.X);
 		yButtonMap = new ButtonMap(gamepad1, ButtonMap.TriggerType.WHILE_PRESSED, ButtonMap.Button.Y);
 		bButtonMap = new ButtonMap(gamepad1, ButtonMap.TriggerType.WHILE_PRESSED, ButtonMap.Button.B);
@@ -46,10 +45,6 @@ public final class Spindexer extends Subsystem {
 	@Override
 	public void update() {
 		//todo: stop command spam and buttonMap spam
-		xButtonMap.updateState();
-		yButtonMap.updateState();
-		bButtonMap.updateState();
-		aButtonMap.updateState();
 
 		/*
 		Trigger.handle(() -> {
