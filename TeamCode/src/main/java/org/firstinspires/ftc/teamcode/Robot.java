@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Modules.Camera;
 import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
 import org.firstinspires.ftc.teamcode.Modules.Slides;
+import org.firstinspires.ftc.teamcode.Modules.TurnTable;
 
 public class Robot {
 
@@ -13,11 +14,14 @@ public class Robot {
     Drivetrain drivetrain;
     Camera camera;
 
+    TurnTable table;
+
     public Robot (HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
 
         drivetrain = new Drivetrain(hardwareMap);
         camera = hardwareMap.get(Camera.class, "camera");
+        table = new TurnTable(2, 0, 0);
     }
 
     public Drivetrain getDrivetrain(){
@@ -26,5 +30,6 @@ public class Robot {
     public Camera getCamera() {
         return camera;
     }
+    public TurnTable getTable() {return table;}
 
 }

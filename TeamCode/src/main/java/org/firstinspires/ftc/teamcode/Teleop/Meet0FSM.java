@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Modules.PIDController;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.ArrayList;
 
 
 @Config
@@ -16,10 +19,9 @@ public class Meet0FSM extends LinearOpMode {
     Robot robot;
 
     boolean hasrun = false;
-
-
-
-
+    boolean align = false;
+    double kp = 0, ki = 0, kd = 0;
+    String goalTag = "Red Goal";
 
     public enum states{
         IDLE,
@@ -33,6 +35,7 @@ public class Meet0FSM extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         hasrun = false;
+        align = false;
         telemetry.addData("Robot status:", "succesfully initiated");
         telemetry.update();
 
@@ -44,6 +47,10 @@ public class Meet0FSM extends LinearOpMode {
         telemetry.update();
 
         while(opModeIsActive()){
+            robot.getTable().setPID(kp, ki, kd);
+            if (gamepad1.a) {
+                align = true;
+            }
             telemetry.addData("Current State:", currentState);
             telemetry.update();
             fieldCentricDrive();
@@ -99,10 +106,6 @@ public class Meet0FSM extends LinearOpMode {
                     hasrun = false;
                 }
 
-                if (gamepad1.right_bumper) {
-                    lockOnTarget();
-                }
-
                 if (gamepad2.left_trigger > 0.1){
                     currentState = states.INTAKE;
                     hasrun = false;
@@ -113,11 +116,31 @@ public class Meet0FSM extends LinearOpMode {
         }
     }
 
+    private double getTagAlignVal() {
+        ArrayList<AprilTagDetection> detections = robot.getCamera().getTagDetections();
+        AprilTagDetection goalTag = null;
+        for (AprilTagDetection detection : detections) {
+            if(detection.metadata.name.equals(goalTag) || !detection.metadata.name.contains("Obelisk")) {
+                goalTag = detection;
+            }
+        }
+
+        if (goalTag == null) { align = false; return 0; }
+
+        double rx = robot.getTable().alignTag(robot.getCamera().getTagHorizontalAngle(goalTag));
+
+        if(rx == 0) {
+            align = false;
+        }
+        return rx;
+    }
+
     private void fieldCentricDrive() {
         double slowdown = gamepad1.right_trigger > 0 ? 0.25 : 1;
         double y = -gamepad1.left_stick_y * slowdown;
         double x = gamepad1.left_stick_x * 1.1 * slowdown;
-        double rx = gamepad1.right_stick_x * slowdown;
+        double alignVal = getTagAlignVal();
+        double rx = (align) ? alignVal : gamepad1.right_stick_x * slowdown;
 
         double heading = robot.getDrivetrain().getRobotHeading(AngleUnit.RADIANS);
 
@@ -136,17 +159,5 @@ public class Meet0FSM extends LinearOpMode {
         if (gamepad1.y) {
             robot.getDrivetrain().resetImu();
         }
-    }
-
-    private void lockOnTarget() {
-        double goalAngle = robot.getCamera().getTagHorizontalAngle(robot.getCamera().getTagDetections().get(0)) * Math.PI / 180; // I literally don't know T-T
-        PIDController turnPID = new PIDController(0.05, 0.1, 0.1); // these are random numbers
-        turnPID.setDeadZone(0.1); // Also random, idk if this is low
-        double calcPow = turnPID.calculate(0, goalAngle); // This feels wrong, someone tell me if it's wrong plz
-
-        double rWheelPower = Math.min(calcPow, 1);
-        double lWheelPower = Math.max(-1, -calcPow);
-
-        robot.getDrivetrain().setWheelPowers(lWheelPower, rWheelPower, rWheelPower, lWheelPower);
     }
 }
